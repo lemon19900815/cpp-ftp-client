@@ -1,0 +1,5 @@
+# this is .gitignore file.
+build/.vs
+build/*.user
+build/*/x64
+build/x64
