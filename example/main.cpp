@@ -39,24 +39,6 @@ void test_receiveLine()
 
 int main(int argc, char **argv)
 {
-    // asio::io_context io_context;
-
-    // DialogSocket s(io_context);
-    // tcp::resolver resolver(io_context);
-    // asio::connect(s, resolver.resolve("10.2.34.178", "21"));
-    // s.connect(tcp::endpoint(make_address("10.2.34.178"), 21));
-
-    // char buff[1024];
-    // auto len = s.read_some(asio::buffer(buff));
-    // uint8_t ch = ' ';
-    // s.receive(asio::buffer(&ch, 1), socket_base::message_out_of_band);
-    // s.send(asio::buffer(&ch, 1), socket_base::message_out_of_band);
-
-    // asio::error_code ec;
-
-    // asio::streambuf buf;
-    // size_t len = asio::read_until(s, buf, "\r\n", ec);
-
     //FTPClientSession session("10.2.34.178", 21, 10086); // windows
     FTPClientSession session("192.168.223.128", 21, 10086); // linux
     //session.setPassive(false);

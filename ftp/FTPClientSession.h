@@ -1,20 +1,14 @@
-﻿//
-// FTPClientSession.h
+﻿// Copyright (c) 2024 buerjia.
+// Rewrite underlying network by asio.
 //
-// Library: Net
-// Package: FTP
-// Module:  FTPClientSession
-//
-// Definition of the FTPClientSession class.
-//
+// Reserved Previous BSL-1.0 License.
+// 
 // Copyright (c) 2005-2006, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
 // SPDX-License-Identifier: BSL-1.0
-//
 
-#ifndef Net_FTPClientSession_INCLUDED
-#define Net_FTPClientSession_INCLUDED
+#pragma once
 
 #include <cstdint>
 #include <istream>
@@ -48,8 +42,8 @@ enum class FileType : uint8_t
 struct FileInfo
 {
     std::string name;
-    int64_t size{0};
-    FileType type{FileType::kInvalidFile};
+    int64_t     size{0};
+    FileType    type{FileType::kInvalidFile};
 
     std::string to_string()
     {
@@ -105,14 +99,6 @@ public:
     /// Passive mode will be used for data transfers.
     FTPClientSession(uint16_t activeDataPort = 0);
 
-    /// Creates an FTPClientSession using the given
-    /// connected socket for the control connection.
-    ///
-    /// Passive mode will be used for data transfers.
-    // FTPClientSession(const StreamSocket &socket, bool readWelcomeMessage =
-    // true,
-    //                  uint16_t activeDataPort = 0);
-
     /// Creates an FTPClientSession using a socket connected
     /// to the given host and port. If username is supplied,
     /// login is attempted.
@@ -123,12 +109,6 @@ public:
 
     /// Destroys the FTPClientSession.
     virtual ~FTPClientSession();
-
-    /// Sets the timeout for socket operations.
-    void setTimeout(const int32_t timeout);
-
-    /// Returns the timeout for socket operations.
-    int32_t getTimeout() const;
 
     /// Enables (default) or disables FTP passive mode for this session.
     ///
@@ -245,11 +225,6 @@ public:
     void removeDirectory(const std::string &path);
 
     /// Starts downloading the file with the given name.
-    /// After all data has been read from the returned stream,
-    /// endDownload() must be called to finish the download.
-    ///
-    /// A stream for reading the file's content is returned.
-    /// The stream is valid until endDownload() is called.
     ///
     /// Creates a data connection between the client and the
     /// server. If passive mode is on, then the server waits for
@@ -263,20 +238,9 @@ public:
     /// the native text file format.
     /// The InputLineEndingConverter class from the Foundation
     /// library can be used for that purpose.
-    // std::istream &beginDownload(const std::string &path);
-
-    /// Must be called to complete a download initiated with
-    /// beginDownload().
-    // void endDownload();
-
     std::string download(const std::string &path);
 
     /// Starts uploading the file with the given name.
-    /// After all data has been written to the returned stream,
-    /// endUpload() must be called to finish the upload.
-    ///
-    /// A stream for reading the file's content is returned.
-    /// The stream is valid until endUpload() is called.
     ///
     /// Creates a data connection between the client and the
     /// server. If passive mode is on, then the server waits for
@@ -290,53 +254,9 @@ public:
     /// into network (CR-LF line endings) format.
     /// The OutputLineEndingConverter class from the Foundation
     /// library can be used for that purpose.
-    //std::ostream &beginUpload(const std::string &path);
-
-    /// Must be called to complete an upload initiated with
-    /// beginUpload().
-    //void endUpload();
-
     void upload(const std::string &path, const std::string &data);
 
-    /// Starts downloading a directory listing.
-    /// After all data has been read from the returned stream,
-    /// endList() must be called to finish the download.
-    ///
-    /// A stream for reading the directory data is returned.
-    /// The stream is valid until endList() is called.
-    ///
-    /// Optionally, a path to a directory or file can be specified.
-    /// According to the FTP protocol, if a path to a filename is
-    /// given, only information for the specific file is returned.
-    /// If a path to a directory is given, a listing of that directory
-    /// is returned. If no path is given, a listing of the current
-    /// working directory is returned.
-    ///
-    /// If extended is false, only a filenames (one per line) are
-    /// returned. Otherwise, a full directory listing including
-    /// file attributes is returned. The format of this listing
-    /// depends on the FTP server. No attempt is made to interpret
-    /// this data.
-    ///
-    /// Creates a data connection between the client and the
-    /// server. If passive mode is on, then the server waits for
-    /// a connection request from the client. Otherwise, the
-    /// client waits for a connection request from the server.
-    /// After establishing the data connection, a SocketStream
-    /// for transferring the data is created.
-    // std::istream &beginList(const std::string &path = "", bool extended =
-    // false);
-
-    ///// Must be called to complete a directory listing download
-    ///// initiated with beginList().
-    // void endList();
-
     /// Download a directory listing.
-    /// After all data has been read from the returned stream,
-    /// endList() must be called to finish the download.
-    ///
-    /// A stream for reading the directory data is returned.
-    /// The stream is valid until endList() is called.
     ///
     /// Optionally, a path to a directory or file can be specified.
     /// According to the FTP protocol, if a path to a filename is
@@ -902,21 +822,21 @@ inline FTPClientSession::~FTPClientSession()
     }
 }
 
-inline void FTPClientSession::setTimeout(const int32_t timeout)
-{
-    if (!isOpen())
-    {
-        throw FTPException("Connection is closed.");
-    }
-
-    _timeout = timeout;
-    //_pControlSocket->setReceiveTimeout(timeout);
-}
-
-inline int32_t FTPClientSession::getTimeout() const
-{
-    return _timeout;
-}
+//inline void FTPClientSession::setTimeout(const int32_t timeout)
+//{
+//    if (!isOpen())
+//    {
+//        throw FTPException("Connection is closed.");
+//    }
+//
+//    _timeout = timeout;
+//    //_pControlSocket->setReceiveTimeout(timeout);
+//}
+//
+//inline int32_t FTPClientSession::getTimeout() const
+//{
+//    return _timeout;
+//}
 
 inline void FTPClientSession::setPassive(bool flag, bool useRFC1738)
 {
@@ -1080,7 +1000,7 @@ inline FileInfo FTPClientSession::getFileInfo(const std::string &path)
                 response = response.substr(pos);
             }
 
-            std::cout << response << std::endl;
+            //std::cout << response << std::endl;
             auto file_list = FileInfoParserFactory::parse(response, true);
             if (file_list.size() == 1u)
             {
@@ -1295,9 +1215,9 @@ inline FileInfoList FTPClientSession::listPath(const std::string &path,
 
     auto data = sendAndReceive(extended ? "LIST" : "NLST", path);
 
-    std::cout << "----------------------------------------------" << std::endl;
-    std::cout << data << std::endl;
-    std::cout << "----------------------------------------------" << std::endl;
+    //std::cout << "----------------------------------------------" << std::endl;
+    //std::cout << data << std::endl;
+    //std::cout << "----------------------------------------------" << std::endl;
 
     return FileInfoParserFactory::parse(data, extended);
 }
@@ -1706,5 +1626,3 @@ inline void FTPClientSession::endTransfer()
 }
 
 }  // namespace ftp
-
-#endif  // Net_FTPClientSession_INCLUDED
