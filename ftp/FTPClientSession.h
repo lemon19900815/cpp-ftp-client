@@ -2,7 +2,7 @@
 // Rewrite underlying network by asio.
 //
 // Reserved Previous BSL-1.0 License.
-// 
+//
 // Copyright (c) 2005-2006, Applied Informatics Software Engineering GmbH.
 // and Contributors.
 //
@@ -17,6 +17,7 @@
 #include <string>
 #include <iostream>
 #include <regex>
+#include <stdexcept>
 
 #include "asio.hpp"
 
@@ -577,21 +578,19 @@ static bool isNumberString(const std::string &s)
 
 } // namespace detail
 
-class FTPException : public std::exception
+class FTPException : public std::runtime_error
 {
 public:
     FTPException(const std::string &msg)
-        : error_(msg), std::exception(error_.c_str()) {}
+        : error_(msg), std::runtime_error(error_) {}
 
     FTPException(const std::string &msg, const std::string &response)
-        : error_(msg + ", response: " + response),
-          std::exception(error_.c_str()) {}
+        : error_(msg + ", response: " + response), std::runtime_error(error_) {}
 
     FTPException(const std::string &msg, const std::string &response,
                  int32_t status)
         : error_(msg + ", response: " + response +
-                 ", status: " + std::to_string(status)),
-          std::exception(error_.c_str()) {}
+                 ", status: " + std::to_string(status)), std::runtime_error(error_) {}
 
 private:
     std::string error_;

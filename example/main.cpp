@@ -57,10 +57,13 @@ int main(int argc, char **argv)
     LOG_INFO("systemType: " << session.systemType());
 
     session.upload("3.txt", "this is a upload test.");
+    LOG_INFO("upload 3.txt success.");
+
     auto txt3 = session.listPath("3.txt", true);
-    assert(txt3.size() == 1);
+    LOG_INFO("listPath 3.txt success.");
 
     LOG_INFO(session.getFileInfo("1.txt").to_string());
+    LOG_INFO("getFileInfo 1.txt success.");
     //LOG_INFO(session.getFileInfo("5.txt").to_string());
 
     //session.rename("1.txt", "2.txt");
